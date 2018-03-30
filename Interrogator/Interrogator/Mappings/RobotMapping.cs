@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Interrogator.Enumerations;
+using Interrogator.Helpers;
 
 namespace Interrogator.Mappings
 {
-    public class RobotMapping : IEnumerable<KeyValuePair<Position, Robot>>
+    public class RobotMapping
     {
+        private RobotMapping(IList<Robot> robots) : this(robots[0], robots[1], robots[2]) { }
+
         public RobotMapping(Robot robotOne, Robot robotTwo, Robot robotThree)
         {
             if (robotOne == robotTwo || robotOne == robotThree || robotTwo == robotThree)
@@ -26,14 +29,14 @@ namespace Interrogator.Mappings
 
         public Robot this[Position position] => Mapping[position];
 
-        public IEnumerator<KeyValuePair<Position, Robot>> GetEnumerator()
+        public static IEnumerable<RobotMapping> GetAllRobotMappings()
         {
-            return Mapping.GetEnumerator();
+            return RobotHelpers.AllRobots().ToList().Permutations().Select(robots => new RobotMapping(robots));
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
+        public override string ToString()
         {
-            return GetEnumerator();
+            return string.Join(" ", Mapping.Select(kvp => kvp.Value.ToString()));
         }
     }
 }

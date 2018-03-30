@@ -5,14 +5,16 @@ using Interrogator.Mappings;
 
 namespace Interrogator.Questions
 {
-    public class AreYouQuestion : IQuestion
+    public class IsItQuestion : IQuestion
     {
         public Position AddressedTo { get; }
+        public Position Target { get; }
         public Robot Robot { get; }
 
-        public AreYouQuestion(Position position, Robot robot)
+        public IsItQuestion(Position position, Position target, Robot robot)
         {
             AddressedTo = position;
+            Target = target;
             Robot = robot;
         }
 
@@ -21,9 +23,9 @@ namespace Interrogator.Questions
             switch (mapping.RobotMapping[AddressedTo])
             {
                 case Robot.T:
-                    return new [] { (Robot == Robot.T).ToAnswer() };
+                    return new [] { (mapping.RobotMapping[Target] == Robot.T).ToAnswer() };
                 case Robot.F:
-                    return new [] { (Robot != Robot.F).ToAnswer() };
+                    return new [] { (mapping.RobotMapping[Target] != Robot.F).ToAnswer() };
                 case Robot.R:
                     return AnswerHelpers.AllAnswers();
                 default:

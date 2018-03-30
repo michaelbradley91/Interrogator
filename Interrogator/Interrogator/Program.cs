@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Interrogator.Enumerations;
 using Interrogator.Mappings;
 using Interrogator.Questions;
@@ -9,15 +10,14 @@ namespace Interrogator
     {
         public static void Main(string[] args)
         {
-            var mapping = new ProblemMapping(
-                new RobotMapping(Robot.T, Robot.F, Robot.R),
-                new AnswerMapping(Language.Ozo, Language.Uzu));
+            foreach (var mapping in ProblemMapping.GetAllProblemMappings())
+            {
+                var question = new IsAnswerQuestion(Position.One, new IsItQuestion(Position.Two, Position.Two, Robot.F), Language.Uzu);
+                var answers = question.GetPossibleAnswers(mapping).OrderBy(a => a);
 
-            var question = new IsAnswerQuestion(Position.One, new AreYouQuestion(Position.Two, Robot.F), Language.Ozo);
+                Console.WriteLine(string.Join(" or ", answers).PadRight(9) + " | " + mapping);
+            }
 
-            var answers = question.GetPossibleAnswers(mapping);
-
-            Console.WriteLine(string.Join(" or ", answers));
             Console.ReadLine();
         }
     }
