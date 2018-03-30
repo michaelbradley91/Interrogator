@@ -8,7 +8,7 @@ namespace Interrogator.Mappings
         public Answer Yes { get; }
         public Answer No { get; }
 
-        private readonly Random random;
+        private readonly Random _random;
 
         public AnswerMapping(Answer yesAnswer, Answer noAnswer)
         {
@@ -17,10 +17,10 @@ namespace Interrogator.Mappings
             Yes = yesAnswer;
             No = noAnswer;
 
-            random = new Random();
+            _random = new Random();
         }
 
         public Answer this[bool answer] => answer ? Yes : No;
-        public Answer Random() => random.Next(0, 2) >= 1 ? Yes : No;
+        public Answer Random() => _random.Next(0, 2) >= 1 ? Yes : No;
     }
 }
