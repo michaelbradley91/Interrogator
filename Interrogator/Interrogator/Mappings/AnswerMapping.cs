@@ -5,12 +5,12 @@ namespace Interrogator.Mappings
 {
     public class AnswerMapping
     {
-        public Answer Yes { get; }
-        public Answer No { get; }
+        public Language Yes { get; }
+        public Language No { get; }
 
         private readonly Random _random;
 
-        public AnswerMapping(Answer yesAnswer, Answer noAnswer)
+        public AnswerMapping(Language yesAnswer, Language noAnswer)
         {
             if (yesAnswer == noAnswer) throw new InvalidOperationException("Yes and no must be distinct.");
 
@@ -19,8 +19,5 @@ namespace Interrogator.Mappings
 
             _random = new Random();
         }
-
-        public Answer this[bool answer] => answer ? Yes : No;
-        public Answer Random() => _random.Next(0, 2) >= 1 ? Yes : No;
     }
 }

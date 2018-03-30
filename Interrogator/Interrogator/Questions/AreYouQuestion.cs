@@ -20,11 +20,11 @@ namespace Interrogator.Questions
             switch (mapping.RobotMapping[AddressedTo])
             {
                 case Robot.T:
-                    return mapping.AnswerMapping[Robot == Robot.T];
+                    return (Robot == Robot.T).ToAnswer();
                 case Robot.F:
-                    return mapping.AnswerMapping[Robot != Robot.F];
+                    return (Robot != Robot.F).ToAnswer();
                 case Robot.R:
-                    return mapping.AnswerMapping.Random();
+                    return Answer.Unknown;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

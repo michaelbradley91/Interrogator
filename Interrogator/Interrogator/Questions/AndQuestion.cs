@@ -25,11 +25,16 @@ namespace Interrogator.Questions
             switch (mapping.RobotMapping[AddressedTo])
             {
                 case Robot.T:
-                    return mapping.AnswerMapping[firstAnswer == mapping.AnswerMapping.Yes && secondAnswer == mapping.AnswerMapping.Yes];
+                    if (firstAnswer == Answer.No || secondAnswer == Answer.No) return Answer.No;
+                    if (firstAnswer == Answer.Unknown || secondAnswer == Answer.Unknown) return Answer.Unknown;
+                    return Answer.Yes;
                 case Robot.F:
-                    return mapping.AnswerMapping[firstAnswer != mapping.AnswerMapping.Yes || secondAnswer != mapping.AnswerMapping.Yes];
+                    if (firstAnswer == Answer.No || secondAnswer == Answer.No) return Answer.Yes;
+                    // It is a bit unclear what a lie is in this case, as both yes or no are incorrect. For simplicity, assume yes.
+                    if (firstAnswer == Answer.Unknown || secondAnswer == Answer.Unknown) return Answer.Yes;
+                    return Answer.No;
                 case Robot.R:
-                    return mapping.AnswerMapping.Random();
+                    return Answer.Unknown;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
