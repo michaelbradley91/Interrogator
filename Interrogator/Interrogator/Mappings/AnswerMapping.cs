@@ -37,14 +37,15 @@ namespace Interrogator.Mappings
             }
         }
 
-        public static IEnumerable<AnswerMapping> GetAllAnswerMappings()
-        {
-            return LanguageHelpers.AllWords().ToList().Permutations().Select(language => new AnswerMapping(language));
-        }
+        public static IEnumerable<AnswerMapping> AllAnswerMappings => LazyAllAnswerMappings.Value;
 
         public override string ToString()
         {
             return Answer.Yes + "=" + Yes + " " + Answer.No + "=" + No;
         }
+
+        private static readonly Lazy<IEnumerable<AnswerMapping>> LazyAllAnswerMappings =
+            new Lazy<IEnumerable<AnswerMapping>>(() =>
+                LanguageHelpers.AllWords().ToList().Permutations().Select(language => new AnswerMapping(language)));
     }
 }

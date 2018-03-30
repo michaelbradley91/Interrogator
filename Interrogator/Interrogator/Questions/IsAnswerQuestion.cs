@@ -43,5 +43,7 @@ namespace Interrogator.Questions
 
             return results.Distinct();
         }
+
+        public string Text => "Asking robot " + AddressedTo + " is the answer to '" + Question.Text + "' " + Word;
     }
 }

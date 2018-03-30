@@ -47,5 +47,7 @@ namespace Interrogator.Questions
 
             return answers.Distinct();
         }
+
+        public string Text => "Asking robot " + AddressedTo + " " + FirstQuestion.Text + " and " + SecondQuestion.Text;
     }
 }

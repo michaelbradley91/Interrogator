@@ -29,14 +29,15 @@ namespace Interrogator.Mappings
 
         public Robot this[Position position] => Mapping[position];
 
-        public static IEnumerable<RobotMapping> GetAllRobotMappings()
-        {
-            return RobotHelpers.AllRobots().ToList().Permutations().Select(robots => new RobotMapping(robots));
-        }
+        public static IEnumerable<RobotMapping> AllRobotMappings => LazyAllRobotMappings.Value;
 
         public override string ToString()
         {
             return string.Join(" ", Mapping.Select(kvp => kvp.Value.ToString()));
         }
+
+        private static readonly Lazy<IEnumerable<RobotMapping>> LazyAllRobotMappings =
+            new Lazy<IEnumerable<RobotMapping>>(() =>
+                RobotHelpers.AllRobots().ToList().Permutations().Select(robots => new RobotMapping(robots)));
     }
 }
