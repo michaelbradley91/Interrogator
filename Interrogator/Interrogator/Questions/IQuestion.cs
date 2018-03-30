@@ -1,4 +1,5 @@
-﻿using Interrogator.Enumerations;
+﻿using System.Collections.Generic;
+using Interrogator.Enumerations;
 using Interrogator.Mappings;
 
 namespace Interrogator.Questions
@@ -6,6 +7,6 @@ namespace Interrogator.Questions
     public interface IQuestion
     {
         Position AddressedTo { get; }
-        Answer GetAnswer(ProblemMapping mapping);
+        IEnumerable<Answer> GetPossibleAnswers(ProblemMapping mapping);
     }
 }

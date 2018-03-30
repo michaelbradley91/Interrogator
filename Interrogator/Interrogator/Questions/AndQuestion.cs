@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Interrogator.Enumerations;
 using Interrogator.Mappings;
 
@@ -17,27 +19,33 @@ namespace Interrogator.Questions
             SecondQuestion = secondQuestion;
         }
 
-        public Answer GetAnswer(ProblemMapping mapping)
+        public IEnumerable<Answer> GetPossibleAnswers(ProblemMapping mapping)
         {
-            var firstAnswer = FirstQuestion.GetAnswer(mapping);
-            var secondAnswer = SecondQuestion.GetAnswer(mapping);
+            var firstAnswers = FirstQuestion.GetPossibleAnswers(mapping).ToList();
+            var secondAnswers = SecondQuestion.GetPossibleAnswers(mapping).ToList();
 
-            switch (mapping.RobotMapping[AddressedTo])
+            var answers = new List<Answer>();
+            foreach (var firstAnswer in firstAnswers)
             {
-                case Robot.T:
-                    if (firstAnswer == Answer.No || secondAnswer == Answer.No) return Answer.No;
-                    if (firstAnswer == Answer.Unknown || secondAnswer == Answer.Unknown) return Answer.Unknown;
-                    return Answer.Yes;
-                case Robot.F:
-                    if (firstAnswer == Answer.No || secondAnswer == Answer.No) return Answer.Yes;
-                    // It is a bit unclear what a lie is in this case, as both yes or no are incorrect. For simplicity, assume yes.
-                    if (firstAnswer == Answer.Unknown || secondAnswer == Answer.Unknown) return Answer.Yes;
-                    return Answer.No;
-                case Robot.R:
-                    return Answer.Unknown;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                foreach (var secondAnswer in secondAnswers)
+                {
+                    switch (mapping.RobotMapping[AddressedTo])
+                    {
+                        case Robot.T:
+                            answers.Add((firstAnswer == Answer.Yes && secondAnswer == Answer.Yes).ToAnswer());
+                            continue;
+                        case Robot.F:
+                            answers.Add((firstAnswer != Answer.Yes || secondAnswer != Answer.Yes).ToAnswer());
+                            continue;
+                        case Robot.R:
+                            return AnswerHelpers.AllAnswers();
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
             }
+
+            return answers.Distinct();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Interrogator.Enumerations;
 using Interrogator.Mappings;
 
@@ -15,16 +16,16 @@ namespace Interrogator.Questions
             Robot = robot;
         }
 
-        public Answer GetAnswer(ProblemMapping mapping)
+        public IEnumerable<Answer> GetPossibleAnswers(ProblemMapping mapping)
         {
             switch (mapping.RobotMapping[AddressedTo])
             {
                 case Robot.T:
-                    return (Robot == Robot.T).ToAnswer();
+                    return new [] { (Robot == Robot.T).ToAnswer() };
                 case Robot.F:
-                    return (Robot != Robot.F).ToAnswer();
+                    return new [] { (Robot != Robot.F).ToAnswer() };
                 case Robot.R:
-                    return Answer.Unknown;
+                    return AnswerHelpers.AllAnswers();
                 default:
                     throw new ArgumentOutOfRangeException();
             }
