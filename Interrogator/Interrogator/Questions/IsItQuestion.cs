@@ -33,12 +33,7 @@ namespace Interrogator.Questions
                     throw new ArgumentOutOfRangeException();
             }
         }
-
-        IEnumerable<IQuestion> ISimpleQuestion.GetAllPossibleQuestions()
-        {
-            return GetAllPossibleQuestions();
-        }
-
+        
         public static IEnumerable<IQuestion> GetAllPossibleQuestions()
         {
             var positions = PositionHelpers.AllPositions();
@@ -51,5 +46,10 @@ namespace Interrogator.Questions
         }
 
         public string Text => "Asking robot " + AddressedTo + " is robot " + Target + " " + Robot;
+
+        IEnumerable<IQuestion> ISimpleQuestion.GetAllPossibleQuestions()
+        {
+            return GetAllPossibleQuestions();
+        }
     }
 }

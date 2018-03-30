@@ -6,7 +6,7 @@ using Interrogator.Mappings;
 
 namespace Interrogator.Questions
 {
-    public class OrQuestion : IQuestion
+    public class OrQuestion : IQuestion, IComplexQuestion
     {
         public Position AddressedTo { get; }
         public IQuestion FirstQuestion { get; }
@@ -49,5 +49,19 @@ namespace Interrogator.Questions
         }
 
         public string Text => "Asking robot " + AddressedTo + " " + FirstQuestion.Text + " or " + SecondQuestion.Text;
+
+        public static IEnumerable<IQuestion> GetAllPossibleQuestions(IReadOnlyList<IQuestion> questions)
+        {
+            return
+                from addressedTo in PositionHelpers.AllPositions()
+                from firstQuestion in questions
+                from secondQuestion in questions
+                select new OrQuestion(addressedTo, firstQuestion, secondQuestion);
+        }
+
+        IEnumerable<IQuestion> IComplexQuestion.GetAllPossibleQuestions(IReadOnlyList<IQuestion> questions)
+        {
+            return GetAllPossibleQuestions(questions);
+        }
     }
 }

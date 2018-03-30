@@ -11,16 +11,18 @@ namespace Interrogator
     {
         public static void Main(string[] args)
         {
+            var numberOfQuestions = 0;
+            Console.WriteLine("Starting...");
             foreach (var mapping in ProblemMapping.AllProblemMappings)
             {
-                foreach (var question in QuestionHelpers.GetAllQuestions(1))
+                foreach (var question in QuestionHelpers.GetAllQuestions(1).Concat(QuestionHelpers.GetAllQuestions(2)))
                 {
                     var answers = question.GetPossibleAnswers(mapping).OrderBy(a => a);
-
-                    Console.WriteLine(string.Join(" or ", answers).PadRight(9) + " | " + mapping + " | " + question.Text);
-                }                
+                }
             }
-
+            Console.WriteLine("Done. Asked this many questions: " + numberOfQuestions);
+            // Deduce by looking at all combinations of robots that can produce each answer.
+            
             Console.ReadLine();
         }
     }

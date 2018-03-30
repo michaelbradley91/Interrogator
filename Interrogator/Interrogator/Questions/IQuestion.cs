@@ -20,7 +20,6 @@ namespace Interrogator.Questions
 
     public interface IComplexQuestion
     {
-        int NumberOfQuestions { get; }
         IEnumerable<IQuestion> GetAllPossibleQuestions(IReadOnlyList<IQuestion> questions);
     }
 
@@ -28,23 +27,27 @@ namespace Interrogator.Questions
     {
         public static IEnumerable<IQuestion> GetAllQuestions(int depth)
         {
-            if (QuestionsByComplexity.ContainsKey(depth)) return QuestionsByComplexity[depth];
+            if (QuestionsByDepth.ContainsKey(depth)) return QuestionsByDepth[depth];
 
-            if (depth == 0) return new List<IQuestion>();
+            if (depth <= 0) return new List<IQuestion>();
             if (depth == 1)
             {
                 var allQuestions = ReflectionHelpers.AllSimpleQuestions.SelectMany(q =>
                         q.GetMethod("GetAllPossibleQuestions").Invoke(null, null) as IEnumerable<IQuestion>).ToList();
 
-                QuestionsByComplexity.Add(depth, allQuestions);
+                QuestionsByDepth.Add(depth, allQuestions);
                 return allQuestions;
             }
 
-            return null;
+            var allSimplerQuestions = GetAllQuestions(depth - 1);
+            var allComplexQuestions = ReflectionHelpers.AllComplexQuestions.SelectMany(q =>
+                q.GetMethod("GetAllPossibleQuestions").Invoke(null, new object[] { allSimplerQuestions }) as IEnumerable<IQuestion>).ToList();
 
+            QuestionsByDepth.Add(depth, allComplexQuestions);
+            return allComplexQuestions;
         }
 
-        private static readonly IDictionary<int, IList<IQuestion>> QuestionsByComplexity =
+        private static readonly IDictionary<int, IList<IQuestion>> QuestionsByDepth =
             new Dictionary<int, IList<IQuestion>>();
     }
 }
