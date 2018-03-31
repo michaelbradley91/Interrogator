@@ -2,57 +2,90 @@
 using System.Collections.Generic;
 using System.Linq;
 using Interrogator.Enumerations;
-using Interrogator.Helpers;
 using Interrogator.Mappings;
 using Interrogator.Questions;
+using Interrogator.Results;
 
 namespace Interrogator
 {
     public class Program
     {
+        private const int MaxQuestionDepth = 2;
+        private const int MaxNumberOfQuestions = 3;
+
         public static void Main(string[] args)
         {
             // How to deduce... For each question, get the answer for each mapping, and group mappings based on the answer.
             // For each answer, you can then see where each robot could be. Practice first...
             Console.WriteLine("Starting...");
 
-            foreach (var firstQuestion in GetAllFirstQuestions())
+            var questionTree = FindQuestionTree(ProblemMapping.AllProblemMappings.ToList(), 1);
+            if (questionTree != null)
             {
-                Console.WriteLine(firstQuestion.Text);
-                var firstQuestionResults = GetQuestionResults(firstQuestion);
-                AnalyseResults(firstQuestionResults);
-
-                foreach (var firstQuestionResult in firstQuestionResults)
-                {
-                    foreach (var secondQuestion in GetAllSecondQuestions())
-                    {
-                        var secondQuestionResults = GetQuestionResults(secondQuestion, firstQuestionResult.Value);
-                        AnalyseResults(secondQuestionResults);
-
-                        foreach (var secondQuestionResult in secondQuestionResults)
-                        {
-                            foreach (var thirdQuestion in GetAllThirdQuestions())
-                            {
-                                var thirdQuestionResults = GetQuestionResults(thirdQuestion, secondQuestionResult.Value);
-                                AnalyseResults(secondQuestionResults);
-                            }
-                        }
-                    }
-                }
+                Console.WriteLine(questionTree.ToString());
             }
             // Deduce by looking at all combinations of robots that can produce each answer.
-            
+
             Console.WriteLine("Done");
             Console.ReadLine();
         }
 
-        private static IEnumerable<IQuestion> GetAllFirstQuestions()
+        private static QuestionTree FindQuestionTree(IList<ProblemMapping> problemMappings, int questionNumber)
         {
-            //return QuestionHelpers.GetAllQuestions(2);
-            return new[]
+            if (questionNumber == MaxNumberOfQuestions)
             {
-                new IsAnswerQuestion(Position.One, new IsItQuestion(Position.One, Position.Two, Robot.R), Language.Ozo)
-            };
+                foreach (var question in GetAllQuestions())
+                {
+                    var allAnswersYieldOneMapping = true;
+                    var results = GetQuestionResults(question, problemMappings);
+                    foreach (var result in results)
+                    {
+                        allAnswersYieldOneMapping &= result.Value.Select(p => p.RobotMapping).Distinct().Count() == 1;
+                    }
+
+                    if (allAnswersYieldOneMapping)
+                    {
+                        return new QuestionTree(question);
+                    }
+                }
+
+                return null;
+            }
+
+            var numberOfQuestions = 0;
+            foreach (var question in GetAllQuestions())
+            {
+                if (questionNumber == 1)
+                {
+                    numberOfQuestions++;
+                    Console.WriteLine(numberOfQuestions + ": " + question.Text);
+                }
+                var questionTree = new QuestionTree(question);
+                var allAnswersYieldOneMapping = true;
+                var results = GetQuestionResults(question, problemMappings);
+                foreach (var result in results)
+                {
+                    var childQuestionTree = FindQuestionTree(result.Value, questionNumber + 1);
+                    if (childQuestionTree == null)
+                    {
+                        allAnswersYieldOneMapping = false;
+                        break;
+                    }
+                    questionTree.Children.Add(result.Key, childQuestionTree);
+                }
+
+                if (allAnswersYieldOneMapping)
+                {
+                    return questionTree;
+                }
+            }
+
+            return null;
+        }
+
+        private static IReadOnlyList<IQuestion> GetAllQuestions()
+        {
+            return QuestionHelpers.GetAllQuestions(MaxQuestionDepth).ToList();
         }
 
         private static IEnumerable<IQuestion> GetAllSecondQuestions()
@@ -60,7 +93,7 @@ namespace Interrogator
             //return QuestionHelpers.GetAllQuestions(2);
             return new[]
             {
-                new IsAnswerQuestion(Position.Two, new IsItQuestion(Position.Two, Position.One, Robot.R), Language.Ozo)
+                new IsAnswerQuestion(Position.Two, new IsItQuestion(Position.Two, Position.One, Robot.R), Word.Ozo)
             };
         }
 
@@ -69,16 +102,16 @@ namespace Interrogator
             //return QuestionHelpers.GetAllQuestions(2);
             return new[]
             {
-                new IsAnswerQuestion(Position.Two, new IsItQuestion(Position.Two, Position.Two, Robot.R), Language.Ozo)
+                new IsAnswerQuestion(Position.Two, new IsItQuestion(Position.Two, Position.Two, Robot.R), Word.Ozo)
             };
         }
 
-        private static IDictionary<Language, IList<ProblemMapping>> GetQuestionResults(IQuestion question, IEnumerable<ProblemMapping> problemMappings = null)
+        private static IDictionary<Word, IList<ProblemMapping>> GetQuestionResults(IQuestion question, IEnumerable<ProblemMapping> problemMappings = null)
         {
             problemMappings = problemMappings ?? ProblemMapping.AllProblemMappings;
 
-            var wordToMapping = LanguageHelpers.AllWords()
-                .ToDictionary<Language, Language, IList<ProblemMapping>>(word => word, word => new List<ProblemMapping>());
+            var wordToMapping = WordHelpers.AllWords()
+                .ToDictionary<Word, Word, IList<ProblemMapping>>(word => word, word => new List<ProblemMapping>());
 
             foreach (var problemMapping in problemMappings)
             {
@@ -92,7 +125,7 @@ namespace Interrogator
             return wordToMapping;
         }
 
-        private static void AnalyseResults(IDictionary<Language, IList<ProblemMapping>> results)
+        private static void AnalyseResults(IDictionary<Word, IList<ProblemMapping>> results)
         {
             foreach (var result in results)
             {

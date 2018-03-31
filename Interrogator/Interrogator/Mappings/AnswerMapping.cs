@@ -8,12 +8,12 @@ namespace Interrogator.Mappings
 {
     public class AnswerMapping
     {
-        public Language Yes { get; }
-        public Language No { get; }
+        public Word Yes { get; }
+        public Word No { get; }
 
-        private AnswerMapping(IList<Language> words) : this(words[0], words[1]) { }
+        private AnswerMapping(IList<Word> words) : this(words[0], words[1]) { }
 
-        public AnswerMapping(Language yesAnswer, Language noAnswer)
+        public AnswerMapping(Word yesAnswer, Word noAnswer)
         {
             if (yesAnswer == noAnswer) throw new InvalidOperationException("Yes and no must be distinct.");
 
@@ -21,7 +21,7 @@ namespace Interrogator.Mappings
             No = noAnswer;
         }
 
-        public Language this[Answer answer]
+        public Word this[Answer answer]
         {
             get
             {
@@ -46,6 +46,6 @@ namespace Interrogator.Mappings
 
         private static readonly Lazy<IEnumerable<AnswerMapping>> LazyAllAnswerMappings =
             new Lazy<IEnumerable<AnswerMapping>>(() =>
-                LanguageHelpers.AllWords().ToList().Permutations().Select(language => new AnswerMapping(language)));
+                WordHelpers.AllWords().ToList().Permutations().Select(language => new AnswerMapping(language)));
     }
 }

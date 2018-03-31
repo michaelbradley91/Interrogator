@@ -50,7 +50,7 @@ namespace Interrogator.Questions
                 return allQuestions;
             }
 
-            var allSimplerQuestions = GetAllQuestions(depth - 1);
+            var allSimplerQuestions = GetAllQuestions(depth - 1).ToList();
             var allComplexQuestions = ReflectionHelpers.AllComplexQuestions.SelectMany(q =>
                 q.GetMethod("GetAllPossibleQuestions").Invoke(null, new object[] { allSimplerQuestions }) as IEnumerable<IQuestion>).ToList();
 

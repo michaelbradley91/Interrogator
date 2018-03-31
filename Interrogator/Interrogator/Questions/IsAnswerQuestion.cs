@@ -10,9 +10,9 @@ namespace Interrogator.Questions
     {
         public Position AddressedTo { get; }
         public IQuestion Question { get; }
-        public Language Word { get; }
+        public Word Word { get; }
 
-        public IsAnswerQuestion(Position addressedTo, IQuestion question, Language word)
+        public IsAnswerQuestion(Position addressedTo, IQuestion question, Word word)
         {
             AddressedTo = addressedTo;
             Question = question;
@@ -51,7 +51,7 @@ namespace Interrogator.Questions
             return
                 from addressedTo in PositionHelpers.AllPositions()
                 from question in questions
-                from answer in LanguageHelpers.AllWords()
+                from answer in WordHelpers.AllWords()
                 select new IsAnswerQuestion(addressedTo, question, answer);
         }
 

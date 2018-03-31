@@ -6,6 +6,7 @@ using Interrogator.Mappings;
 
 namespace Interrogator.Questions
 {
+    /*
     public class AndQuestion : IQuestion, IComplexQuestion
     {
         public Position AddressedTo { get; }
@@ -62,6 +63,7 @@ namespace Interrogator.Questions
         IEnumerable<IQuestion> IComplexQuestion.GetAllPossibleQuestions(IReadOnlyList<IQuestion> questions)
         {
             return GetAllPossibleQuestions(questions);
-        }
+        }  
     }
+    */
 }
