@@ -24,9 +24,9 @@ namespace Interrogator.Questions
             switch (mapping.RobotMapping[AddressedTo])
             {
                 case Robot.T:
-                    return new [] { (mapping.RobotMapping[Target] == Robot.T).ToAnswer() };
+                    return new [] { (mapping.RobotMapping[Target] == Robot).ToAnswer() };
                 case Robot.F:
-                    return new [] { (mapping.RobotMapping[Target] != Robot.F).ToAnswer() };
+                    return new [] { (mapping.RobotMapping[Target] != Robot).ToAnswer() };
                 case Robot.R:
                     return AnswerHelpers.AllAnswers();
                 default:

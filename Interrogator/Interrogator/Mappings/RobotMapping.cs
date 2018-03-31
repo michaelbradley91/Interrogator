@@ -36,6 +36,19 @@ namespace Interrogator.Mappings
             return string.Join(" ", Mapping.Select(kvp => kvp.Value.ToString()));
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj == null) return false;
+            if (obj == this) return true;
+            if (!(obj is RobotMapping otherRobotMapping)) return false;
+            return Mapping.Equals(otherRobotMapping.Mapping);
+        }
+
+        public override int GetHashCode()
+        {
+            return Mapping.GetHashCode();
+        }
+
         private static readonly Lazy<IEnumerable<RobotMapping>> LazyAllRobotMappings =
             new Lazy<IEnumerable<RobotMapping>>(() =>
                 RobotHelpers.AllRobots().ToList().Permutations().Select(robots => new RobotMapping(robots)));

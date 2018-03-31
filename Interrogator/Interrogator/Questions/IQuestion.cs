@@ -25,7 +25,18 @@ namespace Interrogator.Questions
 
     public static class QuestionHelpers
     {
-        public static IEnumerable<IQuestion> GetAllQuestions(int depth)
+        public static IEnumerable<IQuestion> GetAllQuestions(int maxDepth)
+        {
+            for (var i = 0; i <= maxDepth; i++)
+            {
+                foreach (var question in GetAllQuestionsAtDepth(i))
+                {
+                    yield return question;
+                }
+            }
+        }
+
+        private static IEnumerable<IQuestion> GetAllQuestionsAtDepth(int depth)
         {
             if (QuestionsByDepth.ContainsKey(depth)) return QuestionsByDepth[depth];
 
