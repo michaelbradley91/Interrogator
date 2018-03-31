@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Interrogator.Enumerations;
 using Interrogator.Questions;
@@ -16,9 +17,9 @@ namespace Interrogator.Results
 
         public IDictionary<Word, QuestionTree> Children { get; } = new Dictionary<Word, QuestionTree>();
 
-        public override string ToString()
+        public string GetText(int indent = 0)
         {
-            return Question.Text + "? [" + string.Join(" | ", Children.Select(kvp => kvp.Key + " => " + kvp.Value)) + "]";
+            return string.Join("", Enumerable.Repeat(" ", indent)) + Question.Text + "? " + (Children.Any() ? Environment.NewLine + string.Join(Environment.NewLine, Children.Select(kvp => string.Join("", Enumerable.Repeat(" ", indent)) + kvp.Key + " => " + Environment.NewLine + kvp.Value.GetText(indent + 2))) : "");
         }
     }
 }

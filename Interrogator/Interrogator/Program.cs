@@ -22,7 +22,7 @@ namespace Interrogator
             var questionTree = FindQuestionTree(ProblemMapping.AllProblemMappings.ToList(), 1);
             if (questionTree != null)
             {
-                Console.WriteLine(questionTree.ToString());
+                Console.WriteLine(questionTree.GetText());
             }
             // Deduce by looking at all combinations of robots that can produce each answer.
 
